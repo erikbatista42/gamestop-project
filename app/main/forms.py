@@ -27,3 +27,4 @@ class GameForm(FlaskForm):
     gamestop = QuerySelectField('Gamestop', query_factory=lambda: Gamestop.query, allow_blank=False)
     # - submit button
     submit = SubmitField('Submit')
+

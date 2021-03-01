@@ -1,4 +1,5 @@
 from flask import Blueprint, request, render_template, redirect, url_for, flash
+from flask_login import login_user, logout_user, login_required, current_user
 from app.models import Gamestop, Game
 from app.main.forms import GamestopForm, GameForm
 from app import app, db
@@ -12,10 +13,11 @@ def homepage():
     return render_template("home.html", all_gamestops=all_gamestops)
 
 @main.route('/new_gamestop', methods=['GET', 'POST'])
+@login_required
 def new_gamestop():
     form = GamestopForm()
     if form.validate_on_submit():
-        new_gamestop = Gamestop(title=form.title.data, address=form.address.data)
+        new_gamestop = Gamestop(title=form.title.data, address=form.address.data, user=current_user)
         db.session.add(new_gamestop)
         db.session.commit()
         flash("New Gamestop was created.")
@@ -24,6 +26,7 @@ def new_gamestop():
     return render_template("new_gamestop.html", form=form)
 
 @main.route('/new_game', methods=['GET', 'POST'])
+@login_required
 def new_game():
     form = GameForm()
     if form.validate_on_submit():
@@ -44,6 +47,7 @@ def gamestop_detail(gamestop_id):
     if form.validate_on_submit():
         gamestop.title = form.title.data
         gamestop.address = form.address.data
+        # gamestop.user = current_user
         db.session.commit()
         flash(f"{gamestop.title} was updated successfully.")
         return redirect(url_for("main.gamestop_detail", gamestop_id=gamestop.id))
@@ -51,6 +55,7 @@ def gamestop_detail(gamestop_id):
     return render_template("gamestop_detail.html", gamestop=gamestop, form=form)
 
 @main.route("/game/<game_id>", methods=["GET", "POST"])
+@login_required
 def game_detail(game_id):
     game = Game.query.get(game_id)
     form = GameForm(obj=game)

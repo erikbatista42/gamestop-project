@@ -8,6 +8,9 @@
 <form method="POST" action="{{ url_for('main.gamestop_detail', gamestop_id=gamestop.id) }}">
     {{ form.csrf_token }}
     <fieldset>
+        <br>
+        <strong>- Created by: {{ gamestop.user.username }}</strong>
+        <br><br><br>
         <legend>Edit this Gamestop</legend>
 
         {{ form.title.label }}
@@ -28,7 +31,7 @@
             {% endfor %}
           </div>
           
-            
+        <br><br>
         {{ form.submit }}
     </fieldset>
 </form>
